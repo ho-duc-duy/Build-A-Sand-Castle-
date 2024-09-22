@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Build A Sand Castle!</title>
+  <link rel="stylesheet" href="style.css" type="text/css">
+  <!-- pixel font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <style type="text/css">
+    .btn {
+      cursor:pointer;
+      display: inline-block;
+      font-weight: 400;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      border: 1px solid transparent;
+      padding: .375rem .75rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      border-radius: .25rem;
+      transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+    .btn-primary {
+      color: #fff;
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+  </style>
+  <script type="text/javascript">
+    //Music Button
+    function musicButton() {
+      var audio = document.getElementById('myAudio');
+      var musicbtn = document.getElementById('musicbtn');
+      audio.paused ? audio.play() : audio.pause();
+      if (audio.paused) {
+        musicbtn.classList.add("stop");
+      }
+      else {
+        musicbtn.classList.remove("stop");
+      }
+      
+    }
+    
+    // Create a 2D array
+    function make2DArray(cols, rows) {
+      let arr = new Array(cols);
+      for (let i = 0; i < arr.length; i++) {
+        arr[i] = new Array(rows);
+        // Fill the array with 0s
+        for (let j = 0; j < arr[i].length; j++) {
+          arr[i][j] = 0;
+        }
+      }
+      return arr;
+    }
+    //Do day cua cat
+    let matrix = 3;
+    // The grid
+    let grid;
+    let velocityGrid;
+
+    // How big is each square?
+    let w = 5;
+    let cols, rows;
+    let hueValue = 50;
+    let brightValue = 10;
+
+    let gravity = 0.1;
+
+    // Check if a row is within the bounds
+    function withinCols(i) {
+      return i >= 0 && i <= cols - 1;
+    }
+
+    // Check if a column is within the bounds
+    function withinRows(j) {
+      return j >= 0 && j <= rows - 1;
+    }
+
+    function setup() {
+      var canvas = createCanvas(600, 500);
+      canvas.parent('canvas'); // Attach the canvas to the div
+      colorMode(HSB, 360, 255, 255);
+      cols = width / w;
+      rows = height / w;
+      grid = make2DArray(cols, rows);
+      velocityGrid = make2DArray(cols, rows, 1);
+    }
+
+    
+
+    function mouseDragged() { }
+
+    function draw() {
+      background(221);
+
+      if (mouseIsPressed) {
+        let mouseCol = floor(mouseX / w);
+        let mouseRow = floor(mouseY / w);
+
+        // Randomly add an area of sand particles
+        let extent = floor(matrix / 2);
+        for (let i = -extent; i <= extent; i++) {
+          for (let j = -extent; j <= extent; j++) {
+            if (random(1) < 0.75) {
+              let col = mouseCol + i;
+              let row = mouseRow + j;
+              if (withinCols(col) && withinRows(row)) {
+                grid[col][row] = hueValue;
+                velocityGrid[col][row] = 1;
+              }
+            }
+          }
+        }
+        // Change the color of the sand over time
+        // hueValue += 0.5;
+        // if (hueValue > 60) {
+        //   hueValue = 50;
+        // }
+        brightValue += 0.5;
+        if (brightValue > 100) {
+          brightValue = 10;
+        }
+      }
+      
+
+      // Draw the sand
+      for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+          noStroke();
+          if (grid[i][j] > 0) {
+            fill(grid[i][j], 255, 255);
+            let x = i * w;
+            let y = j * w;
+            square(x, y, w);
+          }
+        }
+      }
+
+      // Create a 2D array for the next frame of animation
+      let nextGrid = make2DArray(cols, rows);
+      let nextVelocityGrid = make2DArray(cols, rows);
+
+      // Check every cell
+      for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+          // What is the state?
+          let state = grid[i][j];
+          let velocity = velocityGrid[i][j];
+          let moved = false;
+          if (state > 0) {
+            let newPos = int(j + velocity);
+            for (let y = newPos; y > j; y--) {
+              let below = grid[i][y];
+              let dir = 1;
+              if (random(1) < 0.5) {
+                dir *= -1;
+              }
+              let belowA = -1;
+              let belowB = -1;
+              if (withinCols(i + dir)) belowA = grid[i + dir][y];
+              if (withinCols(i - dir)) belowB = grid[i - dir][y];
+
+              if (below === 0) {
+                nextGrid[i][y] = state;
+                nextVelocityGrid[i][y] = velocity + gravity;
+                moved = true;
+                break;
+              } else if (belowA === 0) {
+                nextGrid[i + dir][y] = state;
+                nextVelocityGrid[i + dir][y] = velocity + gravity;
+                moved = true;
+                break;
+              } else if (belowB === 0) {
+                nextGrid[i - dir][y] = state;
+                nextVelocityGrid[i - dir][y] = velocity + gravity;
+                moved = true;
+                break;
+              }
+            }
+          }
+
+          if (state > 0 && !moved) {
+            nextGrid[i][j] = grid[i][j];
+            nextVelocityGrid[i][j] = velocityGrid[i][j] + gravity;
+          }
+        }
+      }
+      grid = nextGrid;
+      velocityGrid = nextVelocityGrid;
+    }
+    //Buttons
+    function Button1Click() {
+      alert('Increase/Decrease the amount of sand grain dropping over time.');
+    }
+    function Button2Click() {
+      var canvas = createCanvas(600, 500);
+      canvas.parent('canvas');
+      colorMode(HSB, 360, 255, 255);
+      cols = width / w;
+      rows = height / w;
+      grid = make2DArray(cols, rows);
+      velocityGrid = make2DArray(cols, rows, 1);
+    }
+    function Button3Click() {
+      hueValue = hueValue + 10;
+      if (hueValue > 360) {
+        hueValue = 50;
+      }
+    }
+
+    function Button4Click() {
+      saveCanvas('myImage.jpg');
+    }
+
+    function ButtontangClick() {
+      matrix = matrix + 1;
+      if (matrix == 10) {
+        matrix = 10;
+      }
+    }
+    function ButtongiamClick() {
+      matrix = matrix - 1;
+      if (matrix == 1) {
+        matrix = 1;
+      }
+    }
+    
+    
+  </script>
+</head>
+<body>
+  <audio id="myAudio" autoplay>
+    <source src="videoplayback.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+  <button class="musicbutton" id="musicbtn" onclick="musicButton()"></button>
+  <div class="framecanvas"></div>
+  <!-- <audio id="backgroundMusic" src="videoplayback.mp3" loop controls></audio> -->
+  <div class="title"></div>
+  <div class="buttongiam">
+    <button class="tanggiam" id="giam" onclick=ButtongiamClick()></button>
+  </div>
+  <div class="buttontang"> 
+    <button class="tanggiam" id="tang" onclick=ButtontangClick()></button>
+  </div>
+  <div class="buttons">
+    <button class="btn" id="btn1" onclick=Button1Click()></button>
+    <button class="btn" id="btn2" onclick=Button2Click()></button>
+    <button class="btn" id="btn3" onclick=Button3Click()></button>
+    <button class="btn" id="btn4" onclick=Button4Click()></button>
+  </div>
+  <div id="canvas" class="canvas"></div>
+</body>
+</html>

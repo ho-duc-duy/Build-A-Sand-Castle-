@@ -1,0 +1,136 @@
+body {
+    margin: 0;
+    padding: 30px;
+    background-image: url(bg-01.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+/* h1 {
+    font-family: "Pixelify Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-size: 70px;
+    text-align: center;
+    margin-top: 80px;
+    background: -webkit-linear-gradient(#cdbe33, #eaed94);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+} */
+.title {
+    left: 20%;
+    top: 10%;
+    position: relative;
+    width: 60%;
+    height: 50vh;
+    background-image: url(text-title.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.canvas {
+    margin: auto;
+}
+.framecanvas {
+    background-image: url(canvasframe.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 650px;
+    height: 550px;
+    top: 25%;
+    left: 31%;
+    position: absolute;
+}
+#backgroundMusic {
+    opacity: 0.5;
+    width: 250px;
+    height: 30px;
+    transition: 0.3s ease;
+}
+#backgroundMusic:hover {
+    opacity: 1;
+    scale: 1.1;
+}
+#defaultCanvas0 {
+    position: absolute;
+    z-index: -1;
+    top: 28%;
+    left: 33%;
+}
+.btn {
+    width: 150px;
+    height: 70px;
+}
+.tanggiam {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+.buttontang {
+    position: absolute;
+    height: 50px;
+    top: 50%;
+    left: 5%;
+}
+.buttongiam {
+    position: absolute;
+    height: 50px;
+    top: 62%;
+    left: 5%;
+}
+#tang {
+    background-image: url(increase-button.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: transparent;
+    border: none;
+}
+#giam {
+    background-image: url(decrease-button.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: transparent;
+    border: none;
+}
+#btn1 {
+    background-color: transparent;
+    background-image: url(sandgrain-button.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+#btn2 {
+    background-color: transparent;
+    background-image: url(clear-button.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+#btn3 {
+    background-color: transparent;
+    background-image: url(color-button.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    float: right;
+    position: absolute;
+    left: 80%;
+}
+#btn4 {
+    background-color: transparent;
+    background-image: url(download-button.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+.musicbutton {
+    right: 100px;
+    position: absolute;
+    background-image: url(music-icon.png);
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    border: none;
+}
+.musicbutton.stop {
+    background-image: url(music-pause-icon.png);
+}
+.buttons {
+    height: 500px;
+}
